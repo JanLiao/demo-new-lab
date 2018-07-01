@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta content="text/html;charset=UTF-8" />
+<title>主页</title>
+<meta name="keywords"
+	content="fsLayuiPlugin,layui,layuiPlugin,layui插件,layui快速开发插件" />
+<meta name="description"
+	content="fsLayuiPlugin,layui,layuiPlugin,layui插件,layui快速开发插件" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+<link rel="stylesheet" href="../css/jan.css" media="all">
+<style>
+   .layui-layout-admin .layui-logo{
+     width:300px;
+     font-size:22px;
+     color:#FFFFFF;
+   }
+   .layui-layout-admin .layui-header{
+     background-color:#393D49;
+   }
+</style>
+</head>
+<body onpageshow="init()">
+    <!-- <input id="tmpdir" type="hidden" value=""/>
+    <input id="imgname" type="hidden" value=""/> -->
+	<div class="layui-layout layui-layout-admin">
+		<!-- 顶部 -->
+		<div class="layui-header">
+			<div class="layui-logo">CVTE医疗图片标注平台</div>
+			<ul class="layui-nav layui-layout-right">
+				<li class="layui-nav-item"><a href="javascript:;"
+					style="text-decoration: none" class="admin-header-user"> <img
+						src="../img/100.jpg" class="layui-nav-img" /> <span id="name">admin</span>
+				</a>
+					<dl class="layui-nav-child">
+						<dd>
+							<a href="javascript:;" onClick="logout()"
+								style="text-decoration: none"><i class="fa fa-sign-out"
+								aria-hidden="true"></i> 注销</a>
+						</dd>
+					</dl></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- <div class="jan-center"> -->
+		<div class="jan-btn-new">
+		  <input type="button" class="layui-btn" onclick="BrowseFolder()" value="添加任务"/>
+		</div>
+		<div class="jan-btn-mark">
+		  <input type="button" class="layui-btn layui-btn-warm" onclick="markList()" value="标注列表"/>
+		</div>
+		<div class="jan-btn-all">
+		  <input type="button" class="layui-btn" onclick="readyMark(1)" value="进入所有标注"/>
+		</div>
+		<div class="jan-btn-marked">
+		  <input type="button" class="layui-btn layui-btn-warm" onclick="readyMark(2)" value="进入已标注"/>
+		</div>
+		<div class="jan-btn-no-mark">
+		  <input type="button" class="layui-btn layui-btn-warm" onclick="readyMark(3)" value="进入未标注"/>
+		</div>
+		
+		<!-- 任务table -->
+		<div class="jan-table">
+			<table class="layui-table" lay-skin="line">
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>用户名</th>
+						<th>文件夹</th>
+						<th>当前已标注ID</th>
+						<th>ID总数</th>
+						<th>添加时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="tableList"></tbody>
+			</table>
+		</div>
+
+	<!-- </div> -->
+	<script src="../layui/layui.js" charset="utf-8"></script>
+	<!-- <script src="../js/jquery.min.js" charset="utf-8"></script> -->
+	<script>
+layui.use('element', function(){
+  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+  
+  //监听导航点击
+  element.on('nav(demo)', function(elem){
+    //console.log(elem)
+    layer.msg(elem.text());
+  });
+});
+
+layui.use('layer', function(){
+	var layer = layui.layer;
+});
+
+function logout(){
+	app.openCloseMune(0);
+	//window.open('./login.html');
+	//window.location.href="./login.html";
+	app.logout();
+}
+
+function BrowseFolder(){
+	layer.msg("选择文件夹", {icon:6, time:4000});
+	app.openDirectory();
+}
+
+/* $(function(){
+	app.loadData();
+}) */
+function init(){
+	app.loadData();
+}
+
+function getDirData(data){
+	var obj = JSON.parse(data);
+	for(var i = 0; i < obj.length; i++){
+		tmpDirectory(obj[i].id, obj[i].addTime, obj[i].dir, obj[i].total, obj[i].markedId);
+	}
+}
+
+function tmpDirectory(offset, date, dir, total, markedId){
+	var trObj = document.createElement("tr");
+    trObj.id = "dir" + offset;
+    var tdStr = "<td>" + offset + "</td>"
+        + "<td>admin</td>"
+        + "<td>" + dir + "</td>"
+        + "<td>" + markedId + "</td>"
+        + "<td>" + total + "</td>"
+        + "<td>" + date + "</td>"
+        + "<td><button id='delbtn"+offset+"' class='layui-btn layui-btn-mini layui-btn-danger' onclick='delDir(" + offset + ")'>移除</button>"
+        + "</td>";
+    //    + "<button id='markbtn"+offset+"' class='layui-btn layui-btn-mini layui-btn' onclick='mark(" + offset + ")'>标注</button>
+    trObj.innerHTML = tdStr;
+    document.getElementById("tableList").appendChild(trObj);
+}
+
+function getDirectory(markid, date, offset, num, dir){
+	//var msg = '' + num + dir;
+	if(num > 0){
+		var trObj = document.createElement("tr");
+	    trObj.id = "dir" + offset;
+	    var tdStr = "<td>" + offset + "</td>"
+            + "<td>admin</td>"
+            + "<td>" + dir + "</td>"
+            + "<td>" + markid + "</td>"
+            + "<td>" + num + "</td>"
+            + "<td>" + date + "</td>"
+            + "<td><button id='delbtn"+offset+"' class='layui-btn layui-btn-mini layui-btn-danger' onclick='delDir(" + offset + ")'>移除</button>"
+            + "</td>";
+        trObj.innerHTML = tdStr;
+        document.getElementById("tableList").appendChild(trObj);
+        layer.msg("添加成功", {icon:6, time:2000});
+	}else if(num == -1){
+		layer.msg("该文件夹已存在,请重新选择", {icon:5, time:2000});
+	}
+	else if(num == 0){
+		layer.msg("该文件夹下没有图片", {icon:5, time:2000});
+	}
+	else{
+		layer.msg("路径有误,请重新选择", {icon:5, time:2000});
+	}
+}
+
+//删除指定行
+function delDir(offset){
+	layer.confirm('确 定 移 除 任 务?', {icon: 5, title:'移除任务'}, function(index){
+		  var deltrObj = document.getElementById("dir" + offset);
+	      document.getElementById("tableList").removeChild(deltrObj);
+	      app.delDirectory(offset);
+		  
+		  layer.close(index);
+		});
+	
+}
+
+//标注指定文件夹
+function mark(offset){
+	layer.msg("开始标注", {icon:6, time: 2000});
+	app.markImage(offset);
+}
+
+//标注类型
+function readyMark(type){
+	//layer.msg(type, {icon:6, time:6000});
+	app.readyMark1(type);
+}
+
+function label(dir, name){
+	//document.getElementById("tmpdir").value = dir;
+	//document.getElementById("imgname").value = name;
+	app.openCloseMune(1);
+	app.labelImg();
+	//window.location.href="./label.html";
+	//window.open("./label.html");
+}
+
+function showMsg(){
+	layer.msg("所有文件夹都已标注完成", {icon:6, time: 2000});
+}
+
+function showMs(){
+	layer.msg("没有需要标注图片", {icon:6, time: 2000});
+}
+
+function markList(){
+	//app.markList();
+	app.openCloseMune(1);
+	//window.location.href="./mark.html";
+	app.markView();
+}
+
+</script>
+</body>
+</html>

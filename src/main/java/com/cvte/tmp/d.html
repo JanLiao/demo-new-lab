@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<style>
+
+#myimgae {
+
+max-width: 100%;
+
+}
+
+</style>
+
+</head>
+
+<body onload="init()">
+
+<p>鼠标放到下图，滚动鼠标滚轮，放大、缩小图片，触发mouseweheel事件</p>
+
+<img id="myimage" src="./2.jpg" alt="my image" />
+
+<p id="demo"></p>
+
+<script>
+
+var myimage = document.getElementById("myimage");
+
+if (myimage.addEventListener) {
+
+// IE9, Chrome, Safari, Opera
+
+myimage.addEventListener("mousewheel", MouseWheelHandler, false);
+
+// Firefox
+
+myimage.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+
+}
+
+// IE 6/7/8
+
+else myimage.attachEvent("onmousewheel", MouseWheelHandler);
+
+function MouseWheelHandler(e) {
+
+// cross-browser wheel delta
+
+var e = window.event || e; // old IE support
+
+var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+myimage.style.width = Math.max(20, Math.min(900, myimage.width + (30 * delta))) + "px";
+
+return false;
+
+}
+
+function init(){
+	app.alig();
+}
+
+</script>
+
+</body>
+
+</html>

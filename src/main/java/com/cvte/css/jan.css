@@ -1,0 +1,64 @@
+@charset "UTF-8";
+
+.jan-center{
+	position:absolute;
+	top:70px;
+	width:90%;
+	height:95%;
+}
+
+.jan-btn-new{
+	position:absolute;
+	top:12%;
+	left:2%;
+	width:10%;
+}
+.jan-btn-mark{
+	position:absolute;
+	top:12%;
+	left:18%;
+	width:10%;
+}
+.jan-btn-all{
+	position:absolute;
+	top:12%;
+	left:34%;
+	width:10%;
+}
+.jan-btn-marked{
+	position:absolute;
+	top:12%;
+	left:50%;
+	width:10%;
+}
+.jan-btn-no-mark{
+	position:absolute;
+	top:12%;
+	left:66%;
+	width:10%;
+}
+.jan-table{
+	position:absolute;
+	top:19%;
+	left:2%;
+	width:96%;
+}
+
+/* .jan-btn-new{
+	position:absolute;
+	top:16%;
+	left:90%;
+	width:10%;
+}
+.jan-btn-mark{
+	position:absolute;
+	top:30%;
+	left:90%;
+	width:10%;
+}
+.jan-table{
+	position:absolute;
+	top:14%;
+	left:2%;
+	width:86%;
+} */

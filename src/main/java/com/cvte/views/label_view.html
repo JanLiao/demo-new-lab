@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta content="text/html;charset=UTF-8" />
+<title>主页</title>
+<meta name="keywords"
+	content="fsLayuiPlugin,layui,layuiPlugin,layui插件,layui快速开发插件" />
+<meta name="description"
+	content="fsLayuiPlugin,layui,layuiPlugin,layui插件,layui快速开发插件" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../layui/css/layui.css" media="all">
+<link rel="stylesheet" href="../static/css/bootstrap.min.css" />
+
+<link rel="stylesheet" href="../static/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="../static/css/smartMenu.css" />
+<link rel="stylesheet" href="../static/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="../static/css/dataTables.bootstrap.css" />
+<link rel="stylesheet" href="../static/js/public/mloding/jquery.mloading.css" />
+<link rel="stylesheet" href="../static/js/public/contextMenu/jquery.contextMenu.css" />
+<script type="text/javascript" src="../static/js/public/jquery-2.2.3.min.js"></script>
+<script type="text/javascript" src="../static/js/public/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../static/js/public/jquery.form.js"></script>
+<script type="text/javascript" src="../static/js/public/bootstrap.min.js"></script>
+<script type="text/javascript" src="../static/js/public/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="../static/js/public/jquery-smartMenu-min.js"></script>
+<script type="text/javascript" src="../static/js/public/jquery_rotate.js"></script>
+<script type="text/javascript" src="../static/js/public/mloding/jquery.mloading.js"></script>
+<script type="text/javascript" src="../static/js/public/fabric.min.js"></script>
+<script type="text/javascript" src="../static/js/public/contextMenu/jquery.ui.position.min.js"></script>
+<script type="text/javascript" src="../static/js/public/contextMenu/jquery.contextMenu.js"></script>
+<style>
+   .layui-layout-admin .layui-logo{
+     width:300px;
+     font-size:22px;
+     color:#FFFFFF;
+   }
+   .layui-layout-admin .layui-header{
+     background-color:#393D49;
+   }
+   .div_number {
+     float: left;
+     height: 50px;
+     padding: 15px 15px;
+     font-size: 15px;
+     line-height: 20px;
+     color:red;
+   }
+   .list-group-item-info{
+     background-color:#428BCA;
+   }
+</style>
+<script type="text/javascript" src="../static/pop_dialog/zDrag.js"></script>
+<script type="text/javascript" src="../static/pop_dialog/zDialog.js"></script>
+</head>
+<body onload="init()">
+	<div class="layui-layout layui-layout-admin">
+		<!-- 顶部 -->
+		<div class="layui-header">
+			<div class="layui-logo">CVTE医疗图片标注平台</div>
+			<ul class="layui-nav layui-layout-right">
+				<li class="layui-nav-item"><a href="javascript:;"
+					style="text-decoration: none" class="admin-header-user"> <img
+						src="../img/100.jpg" class="layui-nav-img" /> <span id="name">admin</span>
+				</a>
+					<dl class="layui-nav-child">
+						<dd>
+							<a href="javascript:;" onClick="logout()"
+								style="text-decoration: none"><i class="fa fa-sign-out"
+								aria-hidden="true"></i> 注销</a>
+						</dd>
+					</dl></li>
+			</ul>
+		</div>
+	</div>
+
+	<div style="position:absolute; left:2%;top:10%;width:96%;">
+	<!-- <div class="container-fluid"> -->
+		<div style="position:absolute;left:0%;top:2%;width:70%;">
+		    <br>
+			<canvas id="bigImgCanvas" width='800px' height='800px'>
+			  您的浏览器不支持HTML5 canvas,请换一个浏览器
+			</canvas>
+			<div id="contextmenu-output"></div>
+		</div>
+		<div style="position:absolute;left:70%;top:2%;width:30%;">
+			<label id="lbl_alert_tips" name="lbl_alert_tips"
+				style="display: none;"></label>
+			<div class="pty_list">
+			    <br>
+				<a href="#" class="inactive list-group-item list-group-item-info"><font
+					color="#FFF"><strong> 基本信息</strong></font> </a>
+				<table class="table" id="image_data">
+					<tr>
+						<td>图片：<label id="imgname" 
+						   style='width:255px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' 
+						   title='鼠标悬单方浮显示的内容'>
+						   </label>
+						</td>
+						<label id="user" style="display: none;">2</label>
+						<label id="ldata" style="display: none;"></label>
+						<label id="imgurl" style="display: none;">../tmp/5.jpg</label>
+					</tr>
+					<tr><td>任务文件夹: <label id="taskdir"
+					style='width:225px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' 
+						   title='鼠标悬单方浮显示的内容'></label>
+						</td></tr>
+				</table>
+			</div>
+			<div class="pty_list">
+				<a href="#" class="inactive list-group-item list-group-item-info"><font
+					color="#FFF"><strong> 操作提示</strong></font> </a>
+				<br>
+				<table class="table" id="table_tips">
+					<tr>
+						<td>缩放</td>
+						<td>鼠标滚轮</td>
+					</tr>
+					<tr>
+						<td>移动画布</td>
+						<td>上下左右方向键</td>
+					</tr>
+					<!-- <tr>
+						<td>缩放</td>
+						<td>鼠标滚轮</td>
+					</tr> -->
+				</table>
+				<br>
+				<button class="layui-btn" style="width:100%;" onclick="markBack()">返回</button>
+			</div>
+		</div>
+    <!-- </div> -->
+    </div>
+	<script src="../layui/layui.js" charset="utf-8"></script>
+	<!-- <script type="text/javascript" src="../js/jquery.min.js"></script> -->
+	<!-- <script type="text/javascript" src="../static/js/add_label_test.js"></script> -->
+	
+	<script>
+layui.use('element', function(){
+  var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+  
+  //监听导航点击
+  element.on('nav(demo)', function(elem){
+    //console.log(elem)
+    layer.msg(elem.text());
+  });
+});
+
+layui.use('layer', function(){
+	var layer = layui.layer;
+});
+
+/* function initImg(){
+	app.getCurrImg();
+} */
+
+var imgFlag = 0;
+function setImg(imgname, dir, imgPath, ldata){
+	//var v = document.getElementById("imgurl").innerText;
+	//layer.msg(v, {icon:6, time:9000});
+	document.getElementById("imgurl").innerText = "file://" + imgPath;
+	document.getElementById("user").innerText = "admin";
+	document.getElementById("imgname").innerText = imgname;
+	document.getElementById("taskdir").innerText = dir;
+	document.getElementById("ldata").innerText = ldata;
+	/* var img = document.getElementById("imgname");
+	img.setAttribute("title", imgname);
+	var dirDom = document.getElementById("taskdir");
+	dirDom.setAttribute("title", dir); */
+	$("#imgname").attr('title', imgname);
+	$("#taskdir").attr('title', dir);
+	imgFlag = 1;
+	//layer.msg(imgPath, {icon:6, time:9000});
+}
+
+function logout(){
+	app.openCloseMune(0);
+	app.logout();
+	//window.location.href="./login.html";
+	//window.open('./login.html');
+}
+
+function markBack(){
+	window.location.href="./mark.html";
+}
+
+function logOverOut(){
+	layer.msg("图片数据全部标注完成,回到主界面", {icon:6, time:5000});
+	app.openCloseMune(0);
+	app.toIndex();
+	//window.open('./index.html');
+	//window.location.href="./index.html";
+}
+
+
+//add_label_test.js 文件
+String.prototype.replaceAll  = function(s1,s2){
+    return this.replace(new RegExp(s1,"gm"),s2);
+}
+
+//===========================定义全局变量============================================
+var currentImgId = 0;
+var mouse_position; //鼠标当前位置
+
+//图片缩放方法
+var zoom_ratio = 1.0;
+var canvas_zoom_ratio = 1.0
+var winWidth = window.innerWidth * 0.6;
+var my_canvas_data;
+var myoImg ;
+
+// 图片旋转角度
+var current_image_angle = 0;
+
+//方框颜色显示
+var color_flag = 0;
+
+//================================================
+var contextMenuItems;
+
+var canvas = new fabric.Canvas('bigImgCanvas');
+canvas.on({
+'object:moving': onChange,
+'object:scaling': onChange,
+'object:rotating': onChange,
+'mouse:wheel':zoomImage,
+});
+
+
+function onChange(options) {
+    options.target.setCoords();
+
+    canvas.forEachObject(function(obj) {
+      if (obj === options.target) {
+          return;
+      }
+      obj.set('opacity' ,options.target.intersectsWithObject(obj) ? 0.5 : 1);
+
+});}
+
+
+
+//--------------------------------------------------------------------------
+function init(){
+	app.viewImg();
+	if(imgFlag == 1){
+		imgFlag = 0;
+		
+		var image_id = $("#imgid").html();
+	    if(image_id == "0" || image_id== 0){
+	        alert("无数据!");
+	        return;
+	    }
+
+	    var data = $("#ldata").html();
+	    //layer.msg(data, {icon:6,time:8000});
+	    var objects ;
+	    if(data != ""){
+	        //data = data.replaceAll("u'{", "{");
+	        //data = data.replaceAll("}'", "}");
+	        //data = data.replaceAll("u'", "'");
+	        //data = data.replaceAll("'", "\"");
+	        //layer.msg("5", {icon:6,time:5000});
+	        data = data.replaceAll("\"{", "{");
+	        data = data.replaceAll("}\"", "}");
+	        //layer.msg(data, {icon:6,time:8000});
+	        //var objects = JSON.parse("'" + data + "'");
+	        //var objects = JSON.parse(data);
+	        var objects = eval('(' + data + ')'); 
+	        my_canvas_data = objects.canvas_data;
+	        zoom_ratio = objects.zoom_ratio;
+	        //layer.msg(my_canvas_data, {icon:6,time:5000});
+
+	    }
+	    layui.use('layer', function(){
+			var layer = layui.layer;
+			//layer.msg("000000", {icon:6, time:9000});
+		});
+	    
+
+	    //layer.msg("111", {icon:6, time:9000});
+	    update_canvas("");
+
+	    //在canvas上层对象上添加右键事件监听
+	    $(".upper-canvas").contextmenu(onContextmenu);
+
+	    //初始化右键菜单
+	    $.contextMenu({
+	          selector: '#contextmenu-output',
+	          trigger: 'none',
+	          build: function($trigger, e) {
+	              //构建菜单项build方法在每次右键点击会执行
+	              return {
+	                  callback: contextMenuClick,
+	                  items: contextMenuItems
+	              };
+	          }
+	    });
+
+	    if (objects != undefined ) {
+	        draw_circle(objects);
+	    }
+
+
+	    $("#ldata").val("");
+	}
+   
+
+}
+
+
+function draw_circle(objects){
+   for (var i = objects.label_data.length - 1; i >= 0; i--) {
+           var obj = objects.label_data[i];
+           if(obj["name"] == "amd"){
+        	   //var line1 = new fabric.Line(obj["data"].objects[0]);
+        	   //var line2 = new fabric.Line(obj["data"].objects[1]);
+        	   //var lineobj1 = obj["data"]["objects"];
+        	   var line1 = new fabric.Line([obj["data"].objects[0]["x1"], obj["data"].objects[0]["y1"]
+        	   , obj["data"].objects[0]["x2"], obj["data"].objects[0]["y2"]], {
+        		   left:obj["data"].objects[0]["left"],
+        		   top:obj["data"].objects[0]["top"],
+        		   width:obj["data"].objects[0]["width"],
+       			   height:obj["data"].objects[0]["height"],
+       			   fill: obj["data"].objects[0]["fill"],
+    			   stroke: obj["data"].objects[0]["stroke"],
+    			   strokeWidth: obj["data"].objects[0]["strokeWidth"],//笔触宽度
+    			   skewX:obj["data"].objects[0]["skewX"],
+    			   skewY:obj["data"].objects[0]["skewY"],
+    			   angle:obj["data"].objects[0]["angle"],
+    			   paintFirst:obj["data"].objects[0]["paintFirst"]
+        		});
+        		
+        		var line2 = new fabric.Line([obj["data"].objects[1]["x1"], obj["data"].objects[1]["y1"]
+         	   , obj["data"].objects[1]["x2"], obj["data"].objects[1]["y2"]],{
+        			left:obj["data"].objects[1]["left"],
+         		    top:obj["data"].objects[1]["top"],
+         		    width:obj["data"].objects[1]["width"],
+        			height:obj["data"].objects[1]["height"],
+        			fill: obj["data"].objects[1]["fill"],
+      			    stroke: obj["data"].objects[1]["stroke"],
+      			    strokeWidth: obj["data"].objects[1]["strokeWidth"],//笔触宽度
+      			    skewX:obj["data"].objects[1]["skewX"],
+      			    skewY:obj["data"].objects[1]["skewY"],
+      			    angle:obj["data"].objects[1]["angle"],
+      			    paintFirst:obj["data"].objects[1]["paintFirst"]
+        		});
+
+        		var group = new fabric.Group([line1, line2], {
+        			left: obj["data"]["left"],
+        			top: obj["data"]["top"],
+        			angle: obj["data"]["angle"],
+        			scaleX: obj["data"]["scaleX"],
+        			scaleY: obj["data"]["scaleY"],
+        			width:obj["data"]["width"],
+        			height:obj["data"]["height"],
+        			fill:obj["data"]["fill"],
+        			skewX:obj["data"]["skewX"],
+        			skewY:obj["data"]["skewY"]
+        		});
+        		group.name = obj["name"];
+        		canvas.add(group);
+           }
+           else{
+        	   var circle = new fabric.Circle(obj["data"]);
+               //layer.msg(circle, {icon:6, time:9000});
+               circle.name = obj["name"];
+               canvas.add(circle);
+           }
+           
+       
+   }
+}
+
+
+function update_canvas(url_image){
+   //var url_image = "data_img/" + $("#imgurl").html();
+   var url_image = $("#imgurl").html();
+   layui.use('layer', function(){
+		var layer = layui.layer;
+		//layer.msg(url_image, {icon: 6, time: 9000});
+	});
+    if (my_canvas_data != undefined ){
+           //zoom_ratio = zoom_ratio+0.12;
+           // 设置canvas背景
+           fabric.Image.fromURL(url_image, function(oImg) {
+              // canvas.setHeight(my_canvas_data.h);
+              // canvas.setWidth( my_canvas_data.w);
+               oImg.scale(zoom_ratio).set('flipX', true);
+              canvas.setHeight(oImg.width * zoom_ratio);
+              canvas.setWidth(oImg.height * zoom_ratio);
+              //canvas.add(oImg);
+              canvas.setBackgroundImage(oImg);
+              myoImg = oImg;
+            });
+
+    }
+    else {
+    	layui.use('layer', function(){
+    		var layer = layui.layer;
+    		
+    	});
+        // 设置canvas背景 window.innerWidth
+        fabric.Image.fromURL(url_image, function (oImg) {
+            zoom_ratio = 1.0 * winWidth / oImg.width;
+            //zoom_ratio = zoom_ratio - 0.12;
+            zoom_ratio = zoom_ratio - 0.07;
+            canvas.setHeight(oImg.width * zoom_ratio);
+            canvas.setWidth(oImg.height * zoom_ratio);
+            //var ms = "" + zoom_ratio + " , " + oImg.width + " , " + oImg.height + " , " + winWidth;
+            //layer.msg(ms, {icon: 6, time: 5000});
+
+            oImg.scale(zoom_ratio).set('flipX', true);
+            //canvas.add(oImg);
+            //canvas.setBackgroundImage(oImg, canvas.renderAll.bind(canvas));
+            canvas.setBackgroundImage(oImg, canvas.renderAll.bind(canvas));
+            myoImg = oImg;
+        });
+    }
+
+    $("body").mLoading("hide");
+}
+
+
+// 添加圆形框
+function addCircle(circle_type){
+
+	relativex = (mouse_position.x-80)/canvas_zoom_ratio;
+	relativey = (mouse_position.y-80)/canvas_zoom_ratio;
+    var circle = new fabric.Circle({
+        radius: 50, left: relativex, top: relativey, fill: ''
+    });
+
+    if (circle_type == 1) {
+        circle.set({strokeWidth: 2, stroke: 'rgba(51, 171, 160, 1)'});
+        circle.name = "shipan"; //视盘
+        //fabric.Object.prototype.name = "" ;
+    }
+    else {
+        circle.set({strokeWidth: 2, stroke: 'rgba(0, 0, 255, 1)'});
+        circle.name = "shibei"; //视杯
+    }
+    canvas.add(circle);
+}
+
+
+//右键点击事件响应
+var onContextmenu = function(event) {
+    var pointer = canvas.getPointer(event.originalEvent);
+    var objects = canvas.getObjects();
+
+    var select_flag = 0;
+
+    for (var i = objects.length - 1; i >= 0; i--) {
+      var object = objects[i];
+       //判断该对象是否在鼠标点击处
+
+       if (canvas.containsPoint(event, object)) {
+           //选中该对象
+           canvas.setActiveObject(object);
+           //显示菜单
+           select_flag = 1;
+           showContextMenu(event, object, 1);
+           continue;
+       }
+    }
+    if(select_flag == 0) {
+        showContextMenu(event, object, 0);
+    }
+
+    //阻止系统右键菜单
+    event.preventDefault();
+    return false;
+}
+
+
+
+//右键菜单项点击
+function showContextMenu(event, object, select_flag) {
+    //定义右键菜单项
+    if(select_flag == 0)
+    {
+        object = "";
+    }
+
+    contextMenuItems = {"delete": {name: "删除", icon: "delete", data: object},
+                         "add1": {name: "添加视盘", icon: "add", data: object},
+                         "add2": {name: "添加视杯", icon: "add", data: object},};
+
+    //右键菜单显示位置
+    mouse_position = {
+            x: event.clientX,
+            y: event.clientY};
+
+    $("#contextmenu-output").contextMenu(mouse_position);
+}
+
+//右键菜单项点击
+function contextMenuClick(key, options) {
+
+    if (key == "delete") {
+        //得到对应的object并删除
+        var object = contextMenuItems[key].data;
+        if (object == "") {
+            //alert("请先选择需要删除的对象");
+            layer.msg("请先选择需要删除的对象",{icon:5,time:2000});
+        }
+        else {
+            canvas.remove(object);
+        }
+    }
+    else if (key == "add1") {
+        if(check_label("shipan")){
+            addCircle(1);
+        }
+    }
+    else if (key == "add2") {
+        if(check_label("shibei")){
+            addCircle(2);
+        }
+    }
+}
+
+
+function check_label(labe_type) {
+    var objects = canvas.getObjects();
+    if (objects.length == 2){
+        //alert("无法添加!\n注意: 有且只能有1个视盘和1个杯盘标注.");
+        layer.msg("无法添加!\n注意: 有且只能有1个视盘和1个杯盘标注.",{icon:5,time:2000});
+        return false;
+    }
+
+    for (var i = objects.length - 1; i >= 0; i--) {
+      var obj = objects[i];
+
+      if(obj.name == labe_type){
+    	  layer.msg("无法添加!: 有且只能有1个视盘和1个杯盘标注.",{icon:5,time:2000});
+         //alert("无法添加!\n注意: 有且只能有1个视盘和1个杯盘标注.");
+         return false;
+      }
+    }
+    return true;
+}
+
+//=====================缩放============================
+function  zoomImage(options) {
+	
+    var zoomDelta = options.e.wheelDelta;
+    var abs = Math.abs(zoomDelta);
+    //layer.msg(zoomDelta + " 触发鼠标事件," + canvas_zoom_ratio,{icon:6,time:5000});
+
+    //chrome
+    if(zoomDelta == 120 || zoomDelta == -120){
+        canvas_zoom_ratio += (zoomDelta/120)*0.1;
+
+    }//firefox
+    else if(zoomDelta == 300 || zoomDelta == -300){
+     canvas_zoom_ratio += (zoomDelta/3000)*0.1;
+    }
+    else{
+    	canvas_zoom_ratio += (zoomDelta/(abs*2))*0.1;
+    }
+    
+    //canvas_zoom_ratio
+    if(canvas_zoom_ratio < 0.1){
+    	canvas_zoom_ratio = 0.1;
+    	canvas.setZoom(canvas_zoom_ratio);
+    }else{
+    	canvas.setZoom(canvas_zoom_ratio);
+    }
+
+}
+
+function fang(){
+	
+}
+
+//=========================移动===============================
+//      left: 37
+//      up: 38
+//      right: 39
+//      down: 40
+
+function moveCanvas(direction_key) {
+    var x = 0;
+    var y = 0;
+    var step = 10;
+    if (direction_key == 39) {
+        x -= step;
+    } else if (direction_key == 37) {
+        x += step;
+    } else if (direction_key == 40) {
+        y -= step;
+    } else if (direction_key == 38) {
+        y += step;
+    }
+
+    var delta = new fabric.Point(x, y);
+    canvas.relativePan(delta);
+}
+
+//------------------响应按键事件-------------------------------------------------------------------
+$(document).keydown(function (event) {
+    /*
+     按键的ascii值：
+     delete: 46
+     left: 37
+     up: 38
+     right: 39
+     down: 40
+     ctrl: 17
+
+     tab: 9
+     s:83
+     r:82
+     e:69
+     0:48
+
+     */
+    //alert(event.keyCode);
+    var kc = event.keyCode;
+
+    var explorer = navigator.userAgent;
+    //ie
+    if (explorer.indexOf("MSIE") >= 0) {
+    }
+    //firefox
+    else if (explorer.indexOf("Firefox") >= 0) {
+        if (kc == 61) {
+            kc = 187;
+        }
+        else if (kc == 173) {
+            kc = 189;
+        }
+    }
+    //Chrome
+    else if (explorer.indexOf("Chrome") >= 0) {
+    }
+
+
+    //alert(kc);
+
+    // 同时按下组合键的时候，这几个属性会变成true
+    var ctrlKey = event.ctrlKey || event.metaKey;
+
+    if (kc == 37 || kc ==38 || kc == 39 || kc == 40) {
+        moveCanvas(kc);
+    }
+
+        // Ctrl + S 的事件响应
+    if(event.ctrlKey && kc == 83) {
+
+     if(confirm("需要保存当前数据吗?")){
+           func_save_and_next();
+      }
+      else{
+
+      }
+    return;
+
+
+            // 以下是阻止浏览器响应该事件
+            event.returnValue=false;
+            return false;
+     }
+
+});
+
+
+
+
+//save data
+function func_save_and_next(){
+	layer.confirm('确 定 保 存 标 注 信 息?', {icon: 6, title:'标 注 保 存'}, function(index){
+		  layer.close(index);
+		  func_save_label();
+		  
+		});
+    
+    //location.href = "/label";
+}
+
+function func_save_label(){
+        var image_id = $("#imgid").html();
+    var objects = canvas.getObjects();
+
+    if(image_id == "0" || image_id== 0){
+    	layer.msg("当前没有需要保存的数据!", {icon: 5, time: 3000});
+        //alert("当前没有需要保存的数据!");
+        return;
+    }
+
+    if (objects.length != 2){
+    	layer.msg("数据标注错误, 请检查!\n注意: 有且只能有1个视盘和1个杯盘标注.", {icon: 5, time: 3000});
+        //alert("数据标注错误, 请检查!\n注意: 有且只能有1个视盘和1个杯盘标注.");
+        return;
+    }
+
+    var select_flag = 0;
+
+    var li_result = new Array(2);
+
+    for (var i = objects.length - 1; i >= 0; i--) {
+      var obj = objects[i];
+      var result = JSON.stringify(obj.toJSON());
+      result["name"] = obj.name;
+      li_result[i] = {"name:":obj.name, "data":result};
+    }
+    //layer.msg(JSON.stringify(objects[0].toJSON()), {icon:6, time:15000});
+
+    canvas_data = {"w":parseInt(canvas.getWidth()), "h":parseInt(canvas.getHeight())}
+
+    //var url = "/label";
+
+    var data = {
+        "label_data":li_result,
+        "user":$("#user").html(),
+        "dir":$("#taskdir").html(),
+        "image_name":$("#imgname").html(),
+        //"task_id":$("#task_id").html(),
+        //"batch_id":$("#bid").html(),
+        "canvas_data":canvas_data,
+        "zoom_ratio":zoom_ratio
+    };
+    
+    app.saveImgLabel(JSON.stringify(data));
+    
+    //result = ajax_http_request(url, false, "json", JSON.stringify(data))
+}
+
+
+function func_get_last(){
+    if(confirm("需要保存当前数据吗?")){
+        func_save_label();
+      }
+      else{
+
+      }
+    return;
+    location.href = "/label?label_id=-1";
+}
+</script>
+</body>
+</html>
