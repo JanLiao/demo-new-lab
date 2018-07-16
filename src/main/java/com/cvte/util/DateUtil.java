@@ -18,7 +18,7 @@ import com.cvte.ui.Browser;
 */
 public class DateUtil {
 
-	public static void queryOneDay(String start) {
+	public static void queryOneDay(String start, String imgname) {
 		System.out.println("标注列表条件相等");
 		String rootPath = System.getProperty("user.dir").replace("\\", "/");
 		String filePath = rootPath + "/" + Constant.User + "/file/imgAllLabel";
@@ -63,7 +63,7 @@ public class DateUtil {
 		return flag;
 	}
 
-	public static void queryOneCondition(String date, int flag) {
+	public static void queryOneCondition(String date, int flag, String imgname) {
 		System.out.println("标注列表单条件");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String rootPath = System.getProperty("user.dir").replace("\\", "/");
@@ -104,8 +104,12 @@ public class DateUtil {
 						}
 						else {
 							Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
-							System.out.println("img = " + img);
-							list.add(img);
+							if(s[3].indexOf(imgname) != -1) {								
+								System.out.println("img = " + img);
+								list.add(img);
+							}else {
+								System.out.println("可惜了--" + img);
+							}
 						}
 					}
 					else if(flag == 1) {
@@ -116,8 +120,12 @@ public class DateUtil {
 						}
 						else {
 							Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
-							System.out.println("img = " + img);
-							list.add(img);
+							if(s[3].indexOf(imgname) != -1) {								
+								System.out.println("img = " + img);
+								list.add(img);
+							}else {
+								System.out.println("可惜了--" + img);
+							}
 						}
 					}
 				}
@@ -127,7 +135,7 @@ public class DateUtil {
 		}
 	}
 
-	public static void queryTwoCondition(String start, String end) {
+	public static void queryTwoCondition(String start, String end, String imgname) {
 		System.out.println("标注列表双条件");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String rootPath = System.getProperty("user.dir").replace("\\", "/");
@@ -168,14 +176,22 @@ public class DateUtil {
 					}
 					if(d3.after(d1) && d3.before(d2)) {
 						Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
-						System.out.println("img = " + img);
-						list.add(img);
+						if(s[3].indexOf(imgname) != -1) {								
+							System.out.println("img = " + img);
+							list.add(img);
+						}else {
+							System.out.println("可惜了--" + img);
+						}
 					}
 					else {
 						if(start.equals(st[0]) || end.equals(st[0])) {
 							Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
-							System.out.println("img = " + img);
-							list.add(img);
+							if(s[3].indexOf(imgname) != -1) {								
+								System.out.println("img = " + img);
+								list.add(img);
+							}else {
+								System.out.println("可惜了--" + img);
+							}
 						}
 					}
 				}

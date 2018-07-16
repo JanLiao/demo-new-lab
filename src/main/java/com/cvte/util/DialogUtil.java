@@ -1,5 +1,7 @@
 package com.cvte.util;
 
+import com.cvte.cons.Constant;
+import com.cvte.ui.WebUI;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -45,6 +47,32 @@ public class DialogUtil {
         closeButton.setOnAction(event -> {
         	alert.hideWithAnimation();
         	ExportUtil.exportData(id);
+        });
+        JFXButton clsButton = new JFXButton("取  消");
+        clsButton.setStyle("-fx-background-color: RED;-fx-text-fill: WHITE;-fx-font-size: 15px;-fx-padding: 0.5em 0.50em;-fx-pref-width: 110;");
+        clsButton.setOnAction(event -> {
+        	alert.hideWithAnimation();
+        });
+        layout.setActions(closeButton, clsButton);
+        alert.setContent(layout);
+        alert.show();
+	}
+
+	public static void updateLabel(Stage stage, String imgData) {		
+		JFXAlert alert = new JFXAlert((Stage)stage.getScene().getWindow());
+        alert.setOverlayClose(false);
+        alert.setSize(320, 160);
+        JFXDialogLayout layout = new JFXDialogLayout();
+        layout.setHeading(new Label("温馨小提示"));
+        Label content = new Label("修改label操作");
+        content.setStyle("-fx-text-fill: rgb(77,102,204);-fx-font-size: 18px;");
+        layout.setBody(content);
+        JFXButton closeButton = new JFXButton("修   改");
+        closeButton.setStyle("-fx-background-color: GREEN;-fx-text-fill: WHITE;-fx-font-size: 15px;-fx-padding: 0.5em 0.50em;-fx-pref-width: 110;");
+        closeButton.setOnAction(event -> {
+        	alert.hideWithAnimation();
+        	SaveToCSV.updateImgLabelDataNew(imgData);
+        	DialogUtil.showAlert(Constant.stage, "修改成功");
         });
         JFXButton clsButton = new JFXButton("取  消");
         clsButton.setStyle("-fx-background-color: RED;-fx-text-fill: WHITE;-fx-font-size: 15px;-fx-padding: 0.5em 0.50em;-fx-pref-width: 110;");

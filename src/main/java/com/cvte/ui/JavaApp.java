@@ -161,31 +161,32 @@ public class JavaApp {
 		}
 	}
 	
-	public void queryDateNull(String start, String end) {
+	public void queryDateNull(String start, String end, String imgname) {
+		System.out.println("查询 = " + imgname);
 		start = start.trim();
 		end = end.trim();
 		if("".equals(start) && "".equals(end)) {
 			System.out.println("两项都为空,不进行后续操作");
-			markList();
+			markList1(imgname);
 		}
 		else {
 			if("".equals(start)) {  //start为空
-				DateUtil.queryOneCondition(end, 1);
+				DateUtil.queryOneCondition(end, 1, imgname);
 			}
 			else {  //end为空
-				DateUtil.queryOneCondition(start, 0);
+				DateUtil.queryOneCondition(start, 0, imgname);
 			}
 		}
 	}
 	
-	public void queryDate(String start, String end) {
+	public void queryDate(String start, String end, String imgname) {
 		start = start.trim();
 		end = end.trim();
 		if(start.equals(end)) {  //某一天
-			DateUtil.queryOneDay(start);
+			DateUtil.queryOneDay(start, imgname);
 		}
 		else {
-			DateUtil.queryTwoCondition(start, end);
+			DateUtil.queryTwoCondition(start, end, imgname);
 		}
 	}
 	
@@ -1854,6 +1855,42 @@ public class JavaApp {
 		Browser.webEngine.executeScript("setImg1(" + markedflag + ",'" + imgname + "','" + dir + "','"+ img + "','" + Constant.LData + "','" + Constant.User + "'," + type + ")");
 	}
 	
+	public void markList1(String imgname) {
+		System.out.println("标注列表");
+		String rootPath = System.getProperty("user.dir").replace("\\", "/");
+		String filePath = rootPath + "/" + Constant.User + "/file/imgAllLabel";
+		String dirPath = rootPath + "/" + Constant.User + "/file/dir";
+		File f3 = new File(dirPath);
+		List<String[]> list2 = new ArrayList<String[]>();
+		if(f3.exists()) {
+			list2 = ReadCSV.readCSV(dirPath);
+		}
+		File f2 = new File(filePath);
+		if(f2.exists()) {
+			List<String[]> list1 = ReadCSV.readCSV(filePath);
+			List<Image> list = new ArrayList<Image>();
+			for(String[] s : list1) {
+				if(!imgPass(s, list2)) {
+				    System.out.println("该图所对应文件夹已被删除");	
+				}
+				else {
+					Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
+					if(s[3].indexOf(imgname) != -1) {
+					System.out.println(s[3].indexOf(imgname));
+						System.out.println("img = " + img);
+						list.add(img);
+					}else {
+						System.out.println("可惜了--" + img);
+					}
+				}
+			}
+			String str = JSON.toJSONString(list);
+			Browser.webEngine.executeScript("getMarkList(" + list.size() + " ,'"+ str + "','" + Constant.User + "')");
+		}else {
+			Browser.webEngine.executeScript("getMarkList(" + 99999999 + " ,'"+ "aaa" + "','" + Constant.User + "')");
+		}
+	}
+	
 	public void markList() {
 		System.out.println("标注列表");
 		String rootPath = System.getProperty("user.dir").replace("\\", "/");
@@ -1874,8 +1911,13 @@ public class JavaApp {
 				}
 				else {
 					Image img = new Image(s[0], s[1], s[2], s[3], "已标注", s[4]);
-					System.out.println("img = " + img);
-					list.add(img);
+//					if(s[3].indexOf(imgname) != -1) {
+//					System.out.println(s[3].indexOf(imgname));
+						System.out.println("img = " + img);
+						list.add(img);
+//					}else {
+//						System.out.println("可惜了--" + img);
+//					}
 				}
 			}
 			String str = JSON.toJSONString(list);
@@ -2016,6 +2058,13 @@ public class JavaApp {
 			System.out.println("已经返回到主界面");
 			// Browser.webEngine.load(Browser.class.getResource("index.html").toExternalForm());
 		}
+	}
+	
+	//标注列表查看中修改
+	public void updateImgLabel(String imgData) {
+		System.out.println("获取到 修改imgData = " + imgData);
+		DialogUtil.updateLabel(Constant.stage, imgData);		
+		//System.out.println("修改成功吗");
 	}
 	
 	// 标注修改
@@ -2171,6 +2220,10 @@ public class JavaApp {
 				Browser.webEngine.executeScript("markNext()");
 			}
 		}
+		
+	}
+	
+	public void imgUpdate(String dir, String imgname) {
 		
 	}
 	

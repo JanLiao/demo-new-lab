@@ -66,6 +66,13 @@
 							<input style="width:100px;height:25px;" class="Wdate" type="text" id="date2" onclick="WdatePicker({isShowClear:true,readOnly:true})"/>
 						</div>
 					</div>
+					
+					<div class="layui-inline">
+						<label class="layui-form-mid" style="color:green;">图片名:</label>
+						<div class="layui-inline">
+							<input style="width:100px;height:25px;" type="text" id="imgname"/> 
+						</div>
+					</div>
 
 					<div class="layui-inline">
 						<div class="layui-inline">
@@ -99,6 +106,7 @@
 		</div>
 		</div>
 	</div>
+    <!-- <a class="layui-btn layui-btn-sm" lay-event="imgUpdate" >修改</a> -->
 	<script src="../layui/layui.js" charset="utf-8"></script>
 	<script language="javascript" type="text/javascript" src="../My97DatePicker/WdatePicker.js"></script>
 	<script>
@@ -170,14 +178,14 @@
 			layer.msg(msg, {icon:6, time:3000});
 		}
 		
-		function dateCompare(startDate, endDate) {
+		function dateCompare(startDate, endDate, imgname) {
             var Start = startDate.split('-'); //转成成数组，分别为年，月，日，下同
             var End = endDate.split('-');
             var startDateTemp = Start[0] + "/" + Start[1] + "/" + Start[2];
             var endDateTemp = End[0] + "/" + End[1] + "/" + End[2];
             if(startDate == "" || endDate == ""){
             	//showTmpMsg("至少有一项为空");
-            	app.queryDateNull(startDate, endDate);
+            	app.queryDateNull(startDate, endDate, imgname);
             }
             else{
             	if (startDateTemp > endDateTemp){
@@ -185,7 +193,7 @@
                 }
                 else{
                 	//showTmpMsg("小于或者等于");
-                	app.queryDate(startDate, endDate);
+                	app.queryDate(startDate, endDate, imgname);
                 }
             }
         }
@@ -193,7 +201,8 @@
 		function queryByDate() {
 			var date1 = document.getElementById("date1").value;
 			var date2 = document.getElementById("date2").value;
-			dateCompare(date1, date2);
+			var imgname = document.getElementById("imgname").value;
+			dateCompare(date1, date2, imgname);
 		}
 
 		function getMarkList(total, data, user) {
@@ -270,6 +279,8 @@
 								time : 5000
 							}); */
 							app.imgView(dir, imgname);
+						}else if(obj.event === 'imgUpdate'){
+							app.imgUpdate(dir, imgname);
 						}
 					});
 
